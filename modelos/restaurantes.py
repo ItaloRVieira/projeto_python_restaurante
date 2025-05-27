@@ -128,9 +128,9 @@ class Restaurantes:
                 print(mensagem_bebida)
         Restaurantes.selecionar_item_cardapio(self)
                     
-    def adicionar_ao_carrinho(self, item, quantidade):
+    def adicionar_ao_carrinho(self, item, quantidade, preco):
         if isinstance(item, ItemCardapio):
-            carrinho_item = Carrinho(item, quantidade)
+            carrinho_item = Carrinho(item._nome, quantidade, preco)
             self._carrinho.append(carrinho_item)
             print(f'{quantidade} {item._nome} adicionado ao carrinho.\n\n')
         else:
@@ -138,8 +138,15 @@ class Restaurantes:
         Restaurantes.exibir_cardapio(self)
     
     def lista_carrinho(self):
-        print('Passei aqui')
-        pass
+        if not self._carrinho:
+            print('Seu carrinho está vazio.')
+            Restaurantes.exibir_cardapio(self)
+        else: 
+            print(f'{'Item'.ljust(20)} | {'Quantidade'.ljust(12)} | {'Preço'.ljust(10)} | {'Total'.ljust(10)}')
+            for item in self._carrinho:
+                print(f'{item.nome.ljust(20)} | {str(item.quantidade).ljust(12)} | {str(item.preco).ljust(10)} | {item.preco * item.quantidade}')
+            print(f'Total do carrinho: R$ {sum(item.preco * item.quantidade for item in self._carrinho)}')  
+        
     
     def selecionar_item_cardapio(self):
         item = int(input('Informe o número do item que deseja adicionar ao carrinho ou pressione 0 para ir ao carrinho: '))
@@ -147,8 +154,9 @@ class Restaurantes:
             self.lista_carrinho()
         elif 1 <= item <= len(self._cardapio):
             item_cardapio = self._cardapio[item - 1]
+            preco = item_cardapio._preco
             quantidade = int(input('Informe a quantidade que deseja adicionar ao carrinho: '))
-            self.adicionar_ao_carrinho(item_cardapio, quantidade)
+            self.adicionar_ao_carrinho(item_cardapio, quantidade, preco)
             return f'Item {item_cardapio._nome} adicionado ao carrinho com sucesso.'
         else:
                 print('Item não encontrado no cardápio.')
