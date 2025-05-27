@@ -7,3 +7,5 @@ class ItemCardapio:
     @abstractmethod
     def aplicar_desconto(self):
         pass
+    
+    

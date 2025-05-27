@@ -1,5 +1,6 @@
 from modelos.avaliacoes import Avaliacoes
 from modelos.cardapio.item_cardapio import ItemCardapio
+from modelos.carrinho import Carrinho
 
 
 class Restaurantes:
@@ -11,6 +12,7 @@ class Restaurantes:
         self._ativo = False
         self._avaliacao = []
         self._cardapio = []
+        self._carrinho = []
         Restaurantes.restaurantes.append(self)
         
 
@@ -106,7 +108,8 @@ class Restaurantes:
             restaurante = cls.restaurantes[numero - 1]
             from modelos.cardapio.pratos import Prato
             Prato.menu_restaurante(restaurante)
-            print(f"Você acessou o menu do restaurante: {restaurante.nome}.")
+            print(f"Você acessou o menu do restaurante: {restaurante.nome}.\n")
+            Restaurantes.exibir_cardapio(restaurante)
         else:
             print("Número inválido. Por favor, selecione um número válido.")
 
@@ -114,20 +117,42 @@ class Restaurantes:
         if isinstance(item, ItemCardapio):
             self._cardapio.append(item)
     
-    @property
     def exibir_cardapio(self):
         print(f'Cardapio do restaurante {self.nome}\n')
         for i, item in enumerate(self._cardapio, start=1):
             if hasattr(item, 'descricao'):
-                mensagem_prato = (f'{i}. Nome: {item._nome.ljust(25)} | R$ {str(item._preco).ljust(6)} | Descrição: {item.descricao.ljust(30)}')
+                mensagem_prato = (f'{i}. Nome: {item._nome.ljust(25)} | R$ {str(item._preco).ljust(6)} | Descrição: {item.descricao.ljust(30)}\n')
                 print(mensagem_prato)
             elif hasattr(item, 'tamanho'):
-                mensagem_bebida = (f'{i}. Nome: {item._nome.ljust(25)} | R$ {str(item._preco).ljust(6)} | Tamanho: {item.tamanho.ljust(30)}')
+                mensagem_bebida = (f'{i}. Nome: {item._nome.ljust(25)} | R$ {str(item._preco).ljust(6)} | Tamanho: {item.tamanho.ljust(30)}\n')
                 print(mensagem_bebida)
+        Restaurantes.selecionar_item_cardapio(self)
                     
-
-
-
-
+    def adicionar_ao_carrinho(self, item, quantidade):
+        if isinstance(item, ItemCardapio):
+            carrinho_item = Carrinho(item, quantidade)
+            self._carrinho.append(carrinho_item)
+            print(f'{quantidade} {item._nome} adicionado ao carrinho.\n\n')
+        else:
+            print('Item inválido para o carrinho.')
+        Restaurantes.exibir_cardapio(self)
+    
+    def lista_carrinho(self):
+        print('Passei aqui')
+        pass
+    
+    def selecionar_item_cardapio(self):
+        item = int(input('Informe o número do item que deseja adicionar ao carrinho ou pressione 0 para ir ao carrinho: '))
+        if item == 0:
+            self.lista_carrinho()
+        elif 1 <= item <= len(self._cardapio):
+            item_cardapio = self._cardapio[item - 1]
+            quantidade = int(input('Informe a quantidade que deseja adicionar ao carrinho: '))
+            self.adicionar_ao_carrinho(item_cardapio, quantidade)
+            return f'Item {item_cardapio._nome} adicionado ao carrinho com sucesso.'
+        else:
+                print('Item não encontrado no cardápio.')
+                Restaurantes.exibir_cardapio(self)
+                return 'Tente novamente.'
 
 
