@@ -152,13 +152,25 @@ class Restaurantes:
         item = int(input('Informe o número do item que deseja adicionar ao carrinho ou pressione 0 para ir ao carrinho: '))
         if item == 0:
             self.lista_carrinho()
-        elif 1 <= item <= len(self._cardapio):
-            item_cardapio = self._cardapio[item - 1]
-            preco = item_cardapio._preco
-            quantidade = int(input('Informe a quantidade que deseja adicionar ao carrinho: '))
-            self.adicionar_ao_carrinho(item_cardapio, quantidade, preco)
-            return f'Item {item_cardapio._nome} adicionado ao carrinho com sucesso.'
-        else:
+        try:
+            if 1 <= item <= len(self._cardapio):
+                item_cardapio = self._cardapio[item - 1]
+                nome = item_cardapio._nome
+                preco = item_cardapio._preco
+                quantidade = int(input('Informe a quantidade que deseja adicionar ao carrinho: '))
+                
+                encontrado = False
+                for produtos in self._carrinho:
+                    if produtos.nome == nome:
+                        produtos.quantidade += quantidade
+                        encontrado = True
+                        break
+                if not encontrado:
+                    self.adicionar_ao_carrinho(item_cardapio, quantidade, preco)
+                    return f'Item {item_cardapio._nome} adicionado ao carrinho com sucesso.'
+                Restaurantes.exibir_cardapio(self)
+                        
+        except ValueError:
                 print('Item não encontrado no cardápio.')
                 Restaurantes.exibir_cardapio(self)
                 return 'Tente novamente.'
